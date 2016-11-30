@@ -1,0 +1,189 @@
+@import "font-awesome/font-awesome";
+@import "utilities";
+
+
+$use-slideOutLeft: true;
+$use-slideInLeft: true;
+
+@import "animate/animate";
+
+
+.textblock.editable{
+  outline: none;
+}
+
+.textblock.editable.fr-box,
+.editable {
+  outline: 1px dashed #000;
+}
+
+.fr-element{
+  color: inherit;
+}
+
+
+.image-uploader-wrap{
+  display: block !important;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(200, 200, 200, 0.5);
+  position: absolute;
+  text-align: center;
+  top: 0;
+
+  .dz-preview{
+    display: none;
+  }
+
+  .image-uploader{
+    outline: 1px dashed #000;
+    width: 100%;
+    height: 100%;
+    font-size: 24px;
+    cursor: pointer;
+
+
+    &:hover{
+      background-color: rgba(200, 200, 200, 0.5);
+    }
+  }
+
+  .instructions{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+.slide{
+  width: 100%;
+  height: 100%;
+  max-height: $slide-height;
+  background-color: rgba(173, 216, 230, 0.3);
+  position: relative;
+
+  .image-uploader-wrap{
+    padding: 50px;
+  }
+}
+
+.imageblock{
+  position: relative;
+   .image-uploader{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+   }
+}
+
+
+
+$sidebar-width: 25%;
+
+#editor-sidebar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: $sidebar-width;
+  height: 100%;
+  background-color: white;
+  box-shadow: 1px 2px 20px #444;
+  padding: 20px;
+  z-index: 1000;
+
+
+  input[type=text], textarea, select{
+    width: 100%;
+  }
+}
+
+#editor-sidebar.offscreen{
+  left: $sidebar-width * -1;
+  box-shadow: none;
+}
+
+.grid-stack > .grid-stack-item > .ui-resizable-se{
+  color: white;
+  right: 2px;
+}
+
+.page.grid .layout .grid-stack-item{
+  outline: 1px dashed #fff;
+
+  .ui-resizable-handle{
+    position: absolute;
+    bottom: 10px;
+  }
+}
+
+.page.grid .content .grid-stack > .grid-stack-item > .grid-stack-item-content{
+  outline: 1px dashed white;
+}
+
+.grid-edit-buttons{
+  position: fixed;
+  width: 328px;
+  top: 20px;
+  left: 40%;
+
+  .edit-button-label{
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px;
+  }
+
+  .button{
+    background-color: #fff;
+  }
+}
+
+.service{
+  position: relative;
+
+  .section-link-edit{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 250px;
+  }
+
+  [contenteditable=true].empty:before {
+    content: attr(data-placeholder);
+    display: block; /* For Firefox */
+  }
+}
+
+fieldset{
+  margin-bottom: 4px;
+}
+
+// .edit-bar{
+//   width: 100%;
+//   height: 34px;
+//   text-align: center;
+//   line-height: 34px;
+//   background-color: #89DEB0;
+//   display: block;
+//   color: black;
+//   position: absolute;
+//   bottom: $footer-height;
+// }
+
+// .edit-bar:hover{
+//     color: black;
+// }
+.edit-visible{
+  display: block;
+}
+
+.section-link-edit{
+  font-size: 10px;
+}
+
+.fr-toolbar{
+  z-index: 1000;
+}

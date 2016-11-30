@@ -1,0 +1,49 @@
+<div class="slide-content">
+  <div id="slider">
+    {range .Page.Slides}
+      <div class="slide">
+        <div class="image-uploader-wrap">
+          <div class="image-uploader" action="/edit/upload_slide/#{.Slide.SlideID}">
+            <div><strong>Drop image</strong><br>(or click)</div>
+          </div>
+        </div>
+
+        <!--<div class="hero-image">
+          if slide.image_path.nil?
+            <img src="/images/placeholder-1920-1080.png" />
+          else
+            <img src="#{slide.image_path}" />
+          end
+
+        </div>-->
+      </div>
+    
+<!--    
+      <%if !(index >= @page.number_slides) #&& (!slide.image_path.blank? || @show_editor) %>
+        <%render_slide(@page, slide) do %>
+            <% if request["pagemode"] != "layout" %>
+              <div class="title-block">
+                <%=textblock(@page.id, "title-#{index}", :html)%>
+              </div>
+            <%end %>
+        <% end %>
+      <% end %>-->
+   {end}
+  </div>
+</div>
+
+{{ stylesheet "slick/slick"}}
+{{ javascript "slick/slick"}}
+<script type="text/javascript">
+$(function(){
+  $("#slider").slick({
+    // dots: true,
+    // infinite: true,
+    // speed: 300,
+    adaptiveHeight: true,
+    prevArrow: "<a href='javascript:void(0)' class='slick-prev'><span class='arrow arrow-left'></span></a>'",
+    nextArrow: "<a href='javascript:void(0)' class='slick-next'><span class='arrow arrow-right'></span></a>'"
+  })
+})
+</script>
+

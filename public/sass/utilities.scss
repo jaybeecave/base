@@ -1,0 +1,79 @@
+/* Variables
+––––––––––––––––––––––––––––––––––––––––––––––––––*/
+$footer-height: 60px;
+$page-width: 1200px;
+$slide-height: 628px;
+$font: 'Roboto', sans-serif;
+$orange: #f26949;
+$blue: #5278bb;
+$green: #8EC344;
+$darkergreen: #7FAB41;
+$grey: #5E5F5F;
+$red: #C43C35;
+$white: #FFFFFF;
+
+/* Mixins
+––––––––––––––––––––––––––––––––––––––––––––––––––*/
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+/* Utilities
+––––––––––––––––––––––––––––––––––––––––––––––––––*/
+.small-padding{
+  padding: 10px;
+}
+
+.no-top-padding{
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.no-side-padding{
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.top-padding{
+  padding-top: 10px;
+}
+
+.top-margin{
+  margin-top: 20px;
+}
+
+.bot-margin{
+  margin-bottom: 20px;
+}
+
+.no-margin{
+  margin: 0;
+}
+
+.right{
+  text-align: right;
+}
+
+.left{
+  text-align: left;
+}
+
+.center{
+  text-align: center;
+}
+
+.uppercase{
+  text-transform: uppercase;
+}
+
+.hidden{
+  display: none;
+}
+
+.edit-visible{
+  display: none;
+}

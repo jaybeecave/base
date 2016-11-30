@@ -1,0 +1,128 @@
+@import "utilities";
+
+@media (min-width: 768px){
+  .container {
+      width: 750px;
+  }
+}
+@media (min-width: 992px){
+  .container {
+      width: 970px;
+  }
+}
+@media (min-width: 1200px){
+  .container {
+      width: 1170px;
+  }
+}
+@media (min-width: 1600px){
+  .container {
+      width: 1570px;
+  }
+}
+@media (min-width: 1920px){
+  .container {
+      width: 1890px;
+  }
+}
+
+
+
+.droparea{
+  width: 100%;
+  height: 124px;
+  border: 2px dashed #428bca;
+  background-image: url('../images/dropzone.png');
+  background-position: 50% 40%;
+  background-repeat: no-repeat;
+  background-size: 200px;
+
+  .dz-image{
+    float:left;
+    padding: 10px;
+
+    img{
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  .dz-success-mark,
+  .dz-error-mark,
+  .dz-error-message,
+  .dz-size,
+  .dz-filename  {
+    display: none;
+  }
+}
+
+.navbar-nav>li>a{
+  display: inline-block;
+  padding: 0
+}
+
+.navbar .navbar-nav > .active > a, .navbar .navbar-nav > .active > a:hover, .navbar .navbar-nav > .active > a:focus{
+  background-color: transparent;
+  border-bottom: 2px solid #555;
+}
+
+.navbar{
+  font-family: $font;
+
+  li{
+    padding: 15px 10px;
+    text-align: center;
+    width: 80px;
+  }
+
+  .navbar-nav{
+
+    &.pull-right{
+      li{
+        width: initial;
+      }
+    }
+
+    .navbar-nav-form-link{
+      padding: 0;
+      height: 22px;
+    }
+  }
+
+  .navbar-nav-form{
+
+    button{
+      display: none;
+    }
+    button[type='submit']{
+      display: block;
+    }
+  }
+
+  .navbar-module{
+    font-family: $font;
+    font-weight: 600;
+  }
+
+  .navbar-brand{
+    line-height: 50px;
+    height: 50px;
+    margin-top: -5px;
+    padding: 0;
+    padding-right: 30px;
+
+    max-width: 140px;
+    img{
+      width: 100%;
+    }
+  }
+}
+
+.page-wrap{
+  padding-top: 60px;
+}
+
+footer{
+  background-image: none;
+  margin-bottom: 0;
+}
