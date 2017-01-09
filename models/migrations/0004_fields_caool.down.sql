@@ -1,0 +1,2 @@
+ALTER TABLE "caool" DROP COLUMN IF EXISTS "email" text;ALTER TABLE "caool" DROP COLUMN IF EXISTS "role" text;
+

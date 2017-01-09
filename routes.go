@@ -9,9 +9,14 @@ import (
 )
 
 func routes(renderer *render.Render, datastore *store.Datastore) *bone.Mux {
-	r := router.New(renderer, datastore)
+	r := router.NewWithConsole(renderer, datastore)
+
+	// Login routes
 	r.GET("/login", login, security.NoAuth)
 	r.POST("/login-submit", loginSubmit, security.NoAuth)
 	r.GET("/logged-in", loggedIn, security.Disallow)
+
+	// Scaffold routes
+
 	return r.Router
 }

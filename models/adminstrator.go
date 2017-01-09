@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jaybeecave/base/datastore"
-
 	dat "gopkg.in/mgutz/dat.v1"
 	runner "gopkg.in/mgutz/dat.v1/sqlx-runner"
 	redis "gopkg.in/redis.v5"
@@ -32,10 +30,10 @@ type AdministratorHelper struct {
 }
 
 // Helper wraps the database connection and provides a handle for Pack helper functions
-func NewAdministratorHelper(store *datastore.Datastore) *AdministratorHelper {
+func NewAdministratorHelper(db *runner.DB, redis *redis.Client) *AdministratorHelper {
 	helper := &AdministratorHelper{}
-	helper.DB = store.DB
-	helper.Cache = store.Cache
+	helper.DB = db
+	helper.Cache = redis
 	return helper
 }
 

@@ -11,8 +11,6 @@ import (
 	"net/http"
 	"time"
 
-	dat "gopkg.in/mgutz/dat.v1"
-
 	"os"
 	"strconv"
 
@@ -41,15 +39,16 @@ const (
 )
 
 type SessionUser struct {
-	ID         int64          `db:"id" json:"id"`
-	Email      string         `db:"email" json:"Email"`
-	Password   string         `db:"password" json:"Password"`
-	CacheToken dat.NullString `json:"CacheToken"`
+	ID         int64  `db:"id" json:"id"`
+	Email      string `db:"email" json:"Email"`
+	Password   string `db:"password" json:"Password"`
+	CacheToken string `json:"CacheToken"`
 }
 
 type SessionToken struct {
 	Token      string    `json:"Token"`
 	Expiration time.Time `json:"Expiration"`
+	CacheToken string    // dont return this as json `json:"CacheToken"`
 }
 
 type Padlock struct {
@@ -70,11 +69,11 @@ func (padlock *Padlock) LoginReturningToken(email string, password string, table
 
 	// valid names for table
 	tableIDName := ""
-	if tableName == "administrators" {
+	if tableName == "administrator" {
 		tableIDName = "administrator_id"
-	} else if tableName == "users" {
+	} else if tableName == "user" {
 		tableIDName = "user_id"
-	} else if tableName == "people" {
+	} else if tableName == "person" {
 		tableIDName = "person_id"
 	} else {
 		return nil, errors.New("Invalid table name for security SessionUser table")
@@ -83,7 +82,7 @@ func (padlock *Padlock) LoginReturningToken(email string, password string, table
 	err := padlock.Store.DB.
 		Select(tableIDName+" as id, email, password").
 		From(tableName).
-		Where("email LIKE $1 and password = $2", email, password).
+		Where("LOWER(email) = LOWER($1) and password = $2", email, password).
 		Limit(1).
 		QueryStruct(user)
 
@@ -92,12 +91,12 @@ func (padlock *Padlock) LoginReturningToken(email string, password string, table
 	}
 
 	uuid := uuid.NewV4().String() //key for redis or something needs to be part of the json package
-	user.CacheToken = dat.NullStringFrom(uuid)
+	user.CacheToken = uuid
 	// save the new sessionToken into the database so it can be cleared from the cache later if the user gets deleted
 	_, err = padlock.Store.DB.
-		InsertInto("usersession_tokens").
+		InsertInto("usersession_token").
 		Columns("cache_token", "table_name", "record_id").
-		Values(user.CacheToken.String, tableName, user.ID).
+		Values(user.CacheToken, tableName, user.ID).
 		Exec()
 
 	if err != nil {
@@ -121,8 +120,9 @@ func (padlock *Padlock) LoginReturningToken(email string, password string, table
 	duration := time.Duration(expirationInDays) * (24 * time.Hour)
 	expiration := time.Now().Add(duration)
 	sessionToken.Expiration = expiration
+	sessionToken.CacheToken = user.CacheToken
 
-	status := padlock.Store.Cache.Set(user.CacheToken.String, string(jsonUser), duration)
+	status := padlock.Store.Cache.Set(user.CacheToken, string(jsonUser), duration)
 
 	if status.Err() != nil {
 		return nil, err
@@ -187,12 +187,12 @@ func (padlock *Padlock) CheckLogin() (bool, error) {
 		return false, err
 	}
 
-	if !user.CacheToken.Valid {
+	if user.CacheToken == "" {
 		return false, errors.New("invalid token")
 	}
 
 	cachedUser := &SessionUser{}
-	serializedUser, err := padlock.Store.Cache.Get(user.CacheToken.String).Result()
+	serializedUser, err := padlock.Store.Cache.Get(user.CacheToken).Result()
 
 	if err != nil {
 		return false, err

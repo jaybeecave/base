@@ -32,7 +32,6 @@ var viewGlobals = map[string]interface{}{
 func New() *Datastore {
 	store := &Datastore{}
 	// THIS MUST BE FIRST it loads ENV variables
-	store.Settings = settings.New()
 
 	store.DB = getDBConnection()
 	store.Cache = getCacheConnection()
