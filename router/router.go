@@ -5,7 +5,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/go-zoo/bone"
-	"github.com/jaybeecave/base/console"
 	"github.com/jaybeecave/base/datastore"
 	"github.com/jaybeecave/base/security"
 	"github.com/jaybeecave/render"
@@ -23,8 +22,6 @@ type CustomRouter struct {
 func NewWithConsole(renderer *render.Render, store *datastore.Datastore) *CustomRouter {
 	customRouter := New(renderer, store)
 	if store.Settings.ServerIsDEV {
-		// customRouter.Router.GetFunc("/console/functions", console.Functions)
-		customRouter.Router.GetFunc("/console/scaffold/model", console.ScaffoldModel)
 	}
 	return customRouter
 }
