@@ -29,6 +29,9 @@ func New() *Settings {
 	if s.ServerIsDEV {
 		s.ServerIs = "DEV"
 	}
+	if s.ServerIsLVE {
+		s.ServerIs = "LVE"
+	}
 	s.DSN = os.Getenv("DATABASE_URL")
 	s.Sitename = os.Getenv("SITE_NAME")
 	s.EncKey = os.Getenv("SECURITY_ENCRYPTION_KEY")
