@@ -29,7 +29,7 @@ func NewWithConsole(renderer *render.Render, store *datastore.Datastore) *Custom
 func New(renderer *render.Render, store *datastore.Datastore) *CustomRouter {
 	customRouter := &CustomRouter{}
 	r := bone.New()
-	r.CaseSensative = false
+	r.CaseSensitive = false
 	customRouter.Router = r
 	customRouter.Renderer = renderer
 	customRouter.Store = store
