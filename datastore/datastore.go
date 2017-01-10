@@ -83,12 +83,25 @@ func getDBConnection() *runner.DB {
 }
 
 func getCacheConnection() *redis.Client {
-	client := redis.NewClient(&redis.Options{
+
+	opts := &redis.Options{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
 		DB:       0,  // use default DB
-	})
+	}
 
+	url := os.Getenv("REDIS_URL")
+	if url != "" {
+		newOpts, err := redis.ParseURL(url)
+		if err == nil {
+			opts = newOpts
+		} else {
+			log.Error(err)
+			return nil
+		}
+	}
+
+	client := redis.NewClient(opts)
 	pong, err := client.Ping().Result()
 	if err != nil {
 		log.Error(err)
