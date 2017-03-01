@@ -7,19 +7,33 @@ import (
 
 	"gopkg.in/mgutz/dat.v1"
 
+	"fmt"
+
+	"strings"
+
 	"github.com/jaybeecave/base/datastore"
 	"github.com/jaybeecave/base/flash"
 	"github.com/jaybeecave/render"
 )
 
-//
+type viewBucket struct {
+	renderer *render.Render
+	store    *datastore.Datastore
+	w        http.ResponseWriter
+	req      *http.Request
+	Data     map[string]interface{}
+}
+
 func New(w http.ResponseWriter, req *http.Request, renderer *render.Render, store *datastore.Datastore) *viewBucket {
 	viewBag := viewBucket{}
-	viewBag.Data = store.ViewGlobals
 	viewBag.renderer = renderer
 	viewBag.w = w
 	viewBag.req = req
 	viewBag.store = store
+	viewBag.Data = make(map[string]interface{})
+	for name, val := range store.ViewGlobals {
+		viewBag.Add(name, val)
+	}
 	return &viewBag
 }
 
@@ -46,15 +60,7 @@ func (viewBag *viewBucket) Render(status int, templateName string) {
 	msg, _ := flash.GetFlash(viewBag.w, viewBag.req, "InfoMessage")
 	viewBag.Add("InfoMessage", msg) // if its blank it can be blank but atleast it will exist
 
-	viewBag.renderer.HTML(viewBag.w, status, templateName, viewBag)
-}
-
-type viewBucket struct {
-	renderer *render.Render
-	store    *datastore.Datastore
-	w        http.ResponseWriter
-	req      *http.Request
-	Data     map[string]interface{}
+	viewBag.renderer.HTML(viewBag.w, status, templateName, viewBag.Data)
 }
 
 var TemplateFunctions = template.FuncMap{
@@ -65,6 +71,8 @@ var TemplateFunctions = template.FuncMap{
 	"content":    content,
 	"htmlblock":  htmlblock,
 	"navigation": navigation,
+	"link":       link,
+	"title":      title,
 }
 
 func content(contents ...string) template.HTML {
@@ -78,7 +86,7 @@ func content(contents ...string) template.HTML {
 func javascriptTag(names ...string) template.HTML {
 	var str string
 	for _, name := range names {
-		str += "<script src='js/" + name + ".js' type='text/javascript'></script>"
+		str += "<script src='/js/" + name + ".js' type='text/javascript'></script>"
 	}
 	return template.HTML(str)
 }
@@ -86,17 +94,17 @@ func javascriptTag(names ...string) template.HTML {
 func stylesheetTag(names ...string) template.HTML {
 	var str string
 	for _, name := range names {
-		str += "<link rel='stylesheet' href='css/" + name + ".css' type='text/css' media='screen'  />\n"
+		str += "<link rel='stylesheet' href='/css/" + name + ".css' type='text/css' media='screen'  />\n"
 	}
 	return template.HTML(str)
 }
 
 func imagePath(name string) string {
-	return "public/images/" + name
+	return "/images/" + name
 }
 
 func imageTag(name string, class string) template.HTML {
-	return template.HTML("<image src='" + imagePath(name) + " class='" + class + "' />")
+	return template.HTML("<image src='" + imagePath(name) + "' class='" + class + "' />")
 }
 
 func htmlblock(page *Page, code string) template.HTML {
@@ -106,6 +114,18 @@ func htmlblock(page *Page, code string) template.HTML {
 	html += getHTMLFromTextblock(page, code)
 	html += "</div>"
 	return template.HTML(html)
+}
+
+func link(text string, link string, viewBag *viewBucket) template.HTML {
+	class := "link link-" + strings.ToLower(text)
+	if strings.ToLower(link) == viewBag.req.URL.Path {
+		class += " active"
+	}
+	return template.HTML(fmt.Sprintf(`<a class="%v" href="%v">%v</a>`, class, link, text))
+}
+
+func title(text string) string {
+	return strings.Title(text)
 }
 
 func navigation(viewBag *viewBucket) template.HTML {

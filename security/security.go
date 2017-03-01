@@ -93,15 +93,6 @@ func (padlock *Padlock) LoginReturningToken(email string, password string, table
 	uuid := uuid.NewV4().String() //key for redis or something needs to be part of the json package
 	user.CacheToken = uuid
 	// save the new sessionToken into the database so it can be cleared from the cache later if the user gets deleted
-	_, err = padlock.Store.DB.
-		InsertInto("usersession_token").
-		Columns("cache_token", "table_name", "record_id").
-		Values(user.CacheToken, tableName, user.ID).
-		Exec()
-
-	if err != nil {
-		return nil, err
-	}
 
 	jsonUser, err := json.Marshal(user)
 	if err != nil {
@@ -121,6 +112,16 @@ func (padlock *Padlock) LoginReturningToken(email string, password string, table
 	expiration := time.Now().Add(duration)
 	sessionToken.Expiration = expiration
 	sessionToken.CacheToken = user.CacheToken
+
+	_, err = padlock.Store.DB.
+		InsertInto("usersession_token").
+		Columns("cache_token", "table_name", "record_id", "expiry_date").
+		Values(user.CacheToken, tableName, user.ID, expiration).
+		Exec()
+
+	if err != nil {
+		return nil, err
+	}
 
 	status := padlock.Store.Cache.Set(user.CacheToken, string(jsonUser), duration)
 
@@ -146,7 +147,7 @@ func (padlock *Padlock) LoginReturningCookie(email string, password string, tabl
 	return cookie, nil
 }
 
-func (padlock *Padlock) CheckLogin() (bool, error) {
+func (padlock *Padlock) LoggedInUser() (*SessionUser, error) {
 	// check for basic authentication header
 	authToken := ""
 
@@ -166,7 +167,7 @@ func (padlock *Padlock) CheckLogin() (bool, error) {
 		cookie, err := padlock.Req.Cookie(tokenName)
 		if err != nil {
 			if err.Error() == "http: named cookie not present" {
-				return false, errors.New("no auth details found in the request")
+				return nil, errors.New("no auth details found in the request")
 			}
 			panic(err)
 		}
@@ -177,40 +178,47 @@ func (padlock *Padlock) CheckLogin() (bool, error) {
 	//Decrypt the authToken
 	val, err := Decrypt(authToken)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	// grab the resulting json object into a SessionUser struct
 	err = json.Unmarshal([]byte(val), user)
 	// log.Info("user is good?", user)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	if user.CacheToken == "" {
-		return false, errors.New("invalid token")
+		return nil, errors.New("invalid token")
 	}
 
 	cachedUser := &SessionUser{}
 	serializedUser, err := padlock.Store.Cache.Get(user.CacheToken).Result()
 
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	err = json.Unmarshal([]byte(serializedUser), cachedUser)
 	//log.Info("xx is good?", cachedUser)
 
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	// awesome - you are logged in
 	if cachedUser.Email == user.Email && cachedUser.Password == user.Password && cachedUser.ID == user.ID {
+		return cachedUser, nil
+	}
+	return nil, errors.New("user didnt match cache... something funky here.")
+}
+
+func (padlock *Padlock) CheckLogin() (bool, error) {
+	_, err := padlock.LoggedInUser()
+	if err == nil {
 		return true, nil
 	}
-
-	return false, nil
+	return false, err
 }
 
 // encrypt string to base64 crypto using AES

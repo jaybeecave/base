@@ -31,7 +31,6 @@ var viewGlobals = map[string]interface{}{
 // New - returns a new datastore which contains redis, database, view globals and settings.
 func New() *Datastore {
 	store := &Datastore{}
-	// THIS MUST BE FIRST it loads ENV variables
 
 	store.DB = getDBConnection()
 	store.Cache = getCacheConnection()
@@ -42,6 +41,8 @@ func New() *Datastore {
 func getDBConnection() *runner.DB {
 	//get url from ENV in the following format postgres://user:pass@192.168.8.8:5432/spaceio")
 	dbURL := os.Getenv("DATABASE_URL")
+	log.Info(dbURL)
+
 	u, err := url.Parse(dbURL)
 	if err != nil {
 		log.Error(err)
