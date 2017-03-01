@@ -3,8 +3,6 @@ package router
 import (
 	"net/http"
 
-	"strings"
-
 	"github.com/go-zoo/bone"
 	"github.com/jaybeecave/base/datastore"
 	"github.com/jaybeecave/base/security"
@@ -32,49 +30,49 @@ func New(renderer *render.Render, store *datastore.Datastore) *CustomRouter {
 
 // GET - Get handler
 func (customRouter *CustomRouter) GET(route string, routeFunc CustomHandlerFunc, securityType string) *bone.Route {
-	route = strings.ToLower(route)
+	//route = strings.ToLower(route)
 	return customRouter.Router.GetFunc(route, handler(customRouter.Renderer, customRouter.Store, routeFunc, securityType))
 }
 
 // POST - Post handler
 func (customRouter *CustomRouter) POST(route string, routeFunc CustomHandlerFunc, securityType string) *bone.Route {
-	route = strings.ToLower(route)
+	//route = strings.ToLower(route)
 	return customRouter.Router.PostFunc(route, handler(customRouter.Renderer, customRouter.Store, routeFunc, securityType))
 }
 
 // PST - Post handler with pst for tidier lines
 func (customRouter *CustomRouter) PST(route string, routeFunc CustomHandlerFunc, securityType string) *bone.Route {
-	route = strings.ToLower(route)
+	//route = strings.ToLower(route)
 	return customRouter.Router.PostFunc(route, handler(customRouter.Renderer, customRouter.Store, routeFunc, securityType))
 }
 
 // PUT - Put handler
 func (customRouter *CustomRouter) PUT(route string, routeFunc CustomHandlerFunc, securityType string) *bone.Route {
-	route = strings.ToLower(route)
+	//route = strings.ToLower(route)
 	return customRouter.Router.PutFunc(route, handler(customRouter.Renderer, customRouter.Store, routeFunc, securityType))
 }
 
 // PATCH - Patch handler
 func (customRouter *CustomRouter) PATCH(route string, routeFunc CustomHandlerFunc, securityType string) *bone.Route {
-	route = strings.ToLower(route)
+	//route = strings.ToLower(route)
 	return customRouter.Router.PatchFunc(route, handler(customRouter.Renderer, customRouter.Store, routeFunc, securityType))
 }
 
 // OPTIONS - Options handler
 func (customRouter *CustomRouter) OPTIONS(route string, routeFunc CustomHandlerFunc, securityType string) *bone.Route {
-	route = strings.ToLower(route)
+	//route = strings.ToLower(route)
 	return customRouter.Router.OptionsFunc(route, handler(customRouter.Renderer, customRouter.Store, routeFunc, securityType))
 }
 
 // DELETE - Delete handler
 func (customRouter *CustomRouter) DELETE(route string, routeFunc CustomHandlerFunc, securityType string) *bone.Route {
-	route = strings.ToLower(route)
+	//route = strings.ToLower(route)
 	return customRouter.Router.DeleteFunc(route, handler(customRouter.Renderer, customRouter.Store, routeFunc, securityType))
 }
 
 // DEL - Delete handler
 func (customRouter *CustomRouter) DEL(route string, routeFunc CustomHandlerFunc, securityType string) *bone.Route {
-	route = strings.ToLower(route)
+	//route = strings.ToLower(route)
 	return customRouter.Router.DeleteFunc(route, handler(customRouter.Renderer, customRouter.Store, routeFunc, securityType))
 }
 
