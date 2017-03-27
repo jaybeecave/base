@@ -8,13 +8,14 @@ import (
 
 // Settings - common settings used around the site. Currently loaded into the datastore object
 type Settings struct {
-	ServerIsDEV bool
-	ServerIsLVE bool
-	ServerIs    string
-	DSN         string
-	Sitename    string
-	EncKey      string
-	ServerPort  string
+	ServerIsDEV       bool
+	ServerIsLVE       bool
+	ServerIs          string
+	DSN               string
+	Sitename          string
+	EncKey            string
+	ServerPort        string
+	AttachmentsFolder string
 }
 
 // New - returns a settings object to be used globally - not as a global variable, but passed around via the datastore.
@@ -35,6 +36,7 @@ func New() *Settings {
 	s.DSN = os.Getenv("DATABASE_URL")
 	s.Sitename = os.Getenv("SITE_NAME")
 	s.EncKey = os.Getenv("SECURITY_ENCRYPTION_KEY")
+	s.AttachmentsFolder = os.Getenv("ATTACHMENTS_FOLDER")
 
 	port := os.Getenv("PORT")
 	if port == "" {

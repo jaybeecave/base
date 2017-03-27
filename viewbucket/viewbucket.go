@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 
 	"gopkg.in/mgutz/dat.v1"
 
@@ -73,6 +74,16 @@ var TemplateFunctions = template.FuncMap{
 	"navigation": navigation,
 	"link":       link,
 	"title":      title,
+
+	"isBlank":    isBlank,
+	"isNotBlank": isNotBlank,
+	"formatDate": formatDate,
+	"htmlsafe":   htmlSafe,
+	"gt":         greaterThan,
+}
+
+func greaterThan(num int, amt int) bool {
+	return num > amt
 }
 
 func content(contents ...string) template.HTML {
@@ -107,6 +118,10 @@ func imageTag(name string, class string) template.HTML {
 	return template.HTML("<image src='" + imagePath(name) + "' class='" + class + "' />")
 }
 
+func htmlSafe(str string) template.HTML {
+	return template.HTML(str)
+}
+
 func htmlblock(page *Page, code string) template.HTML {
 	html := "<div class='textblock editable' "
 	html += " data-textblock='page-" + strconv.FormatInt(page.PageID, 10) + "-" + code + "'"
@@ -139,6 +154,14 @@ func navigation(viewBag *viewBucket) template.HTML {
 		html += "</nav>"
 	}
 	return template.HTML(html)
+}
+
+func isBlank(str string) bool {
+	return str == ""
+}
+
+func isNotBlank(str string) bool {
+	return !isBlank(str)
 }
 
 type Page struct {
@@ -178,4 +201,8 @@ func getHTMLFromTextblock(page *Page, code string) string {
 		}
 	}
 	return body
+}
+
+func formatDate(time time.Time, layout string) string {
+	return time.Format(layout)
 }

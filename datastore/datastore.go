@@ -77,7 +77,7 @@ func getDBConnection() *runner.DB {
 	dat.Strict = false
 
 	// Log any query over 10ms as warnings. (optional)
-	runner.LogQueriesThreshold = 10 * time.Millisecond
+	runner.LogQueriesThreshold = 1 * time.Microsecond
 
 	// db connection
 	return runner.NewDB(db, "postgres")

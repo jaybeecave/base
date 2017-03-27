@@ -18,8 +18,6 @@ import (
 
 	"errors"
 
-	log "github.com/Sirupsen/logrus"
-
 	"github.com/jaybeecave/base/datastore"
 	uuid "github.com/satori/go.uuid"
 )
@@ -39,7 +37,7 @@ const (
 )
 
 type SessionUser struct {
-	ID         int64  `db:"id" json:"id"`
+	ID         int    `db:"id" json:"id"`
 	Email      string `db:"email" json:"Email"`
 	Password   string `db:"password" json:"Password"`
 	CacheToken string `json:"CacheToken"`
@@ -87,7 +85,7 @@ func (padlock *Padlock) LoginReturningToken(email string, password string, table
 		QueryStruct(user)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Incorrect password")
 	}
 
 	uuid := uuid.NewV4().String() //key for redis or something needs to be part of the json package
@@ -129,8 +127,8 @@ func (padlock *Padlock) LoginReturningToken(email string, password string, table
 		return nil, err
 	}
 
-	result, err := status.Result()
-	log.Info(result)
+	// result, err := status.Result()
+	// log.Info(result)
 
 	// TODO HMAC AUTH
 	return sessionToken, nil
@@ -159,6 +157,11 @@ func (padlock *Padlock) LoggedInUser() (*SessionUser, error) {
 		if len(authTokenBits) > 0 {
 			authToken = authTokenBits[1]
 		}
+	}
+
+	// we still haven't found the authtoken so try checking a cookie
+	if authToken == "" {
+		authToken = padlock.Req.URL.Query().Get("authtoken")
 	}
 
 	// we still haven't found the authtoken so try checking a cookie

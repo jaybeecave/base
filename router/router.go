@@ -1,6 +1,7 @@
 package router
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-zoo/bone"
@@ -22,6 +23,9 @@ func New(renderer *render.Render, store *datastore.Datastore) *CustomRouter {
 	r := bone.New()
 	r.CaseSensitive = false
 	r.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public/"))))
+	r.Handle("/webapp/", http.StripPrefix("/webapp/", http.FileServer(http.Dir("./webapp/js"))))
+	r.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
+	r.Handle("/attachments/", http.StripPrefix("/attachments/", http.FileServer(http.Dir(store.Settings.AttachmentsFolder))))
 	customRouter.Router = r
 	customRouter.Renderer = renderer
 	customRouter.Store = store
@@ -82,11 +86,12 @@ func handler(renderer *render.Render, store *datastore.Datastore, fn CustomHandl
 
 		// check for a logged in user. We always check this incase we need it
 		loggedInUser, _ := padlock.LoggedInUser()
-		if loggedInUser != nil {
-			store.ViewGlobals["User"] = loggedInUser
-			store.ViewGlobals["IsLoggedIn"] = true
-		}
+		// if loggedInUser != nil {
+		// 	store.ViewGlobals["User"] = loggedInUser // concurrency issues....
+		// 	store.ViewGlobals["IsLoggedIn"] = true
+		// }
 
+		// req.WithContext()
 		// check the route requires auth
 		if authMethod == security.NoAuth {
 			fn(w, req, renderer, store)
@@ -95,7 +100,8 @@ func handler(renderer *render.Render, store *datastore.Datastore, fn CustomHandl
 
 		// if we are at this point then we want a login
 		if loggedInUser != nil {
-			fn(w, req, renderer, store)
+			ctx := context.WithValue(req.Context(), "loggedInUser", loggedInUser)
+			fn(w, req.WithContext(ctx), renderer, store)
 			return
 		}
 
